@@ -30,13 +30,9 @@ def getOrderBookVol(api, pair):
     
 #####Generate Coin Opportunity List#######
 def getOpportunities():
-  import os
   coinOpportunities = {}
   api = initPoloConnection()
   coinNames = getCoinNames(api)
   for coin in coinNames:
-    os.system("clear")
-    os.system("clear")
-    print(str(round(100 / (len(coinNames) / (coinNames.index(coin) + 1)), 1)) + "%")
     coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(api, coin)
   return coinOpportunities
