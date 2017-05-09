@@ -11,13 +11,13 @@ def amalgamateScores():
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
    for coin in coinOrderBookRatios:
       if coin in avgCoinScores:
-         avgCoinScores[coin][0], avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
+         avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, avgCoinScores[coin][1] + 1]
       else:
          avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
          
    for coin in coinMkToVolRatios:
       if coin in avgCoinScores:
-         avgCoinScores[coin][0], avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
+         avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinMkToVolRatios[coin]/totalMkToVolScore, avgCoinScores[coin][1] + 1]
       else:
          avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
    return avgCoinScores
