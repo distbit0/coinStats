@@ -1,6 +1,5 @@
 from volumeToMarketCapRatio import getCoinMkToVolRatios
 from orderBookRatio import getOpportunities
-from orderBookRatio import displayOutput
 coinOrderBookRatios = getOpportunities()
 coinMkToVolRatios = getCoinMkToVolRatios()
 avgCoinScores = {}
