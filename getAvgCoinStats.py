@@ -20,6 +20,7 @@ def amalgamateScores():
          avgCoinScores[coin][0], avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
       else:
          avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
+   return avgCoinScores
 
 
 def displayCoinScores(coinMkToVolRatios):
