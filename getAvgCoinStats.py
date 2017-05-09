@@ -7,7 +7,8 @@ def collectData():
    totalMkToVolScore, totalOrderBookRatioScore = [sum(coinMkToVolRatios.values()), sum(coinOrderBookRatios.values())]
    return [coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore]
 
-def amalgamateScores(coinOrderBookRatios, coinMkToVolRatios, totalOrderBookRatioScore, totalMkToVolScore):
+def amalgamateScores():
+   coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
    for coin in coinOrderBookRatios:
       if coin in avgCoinScores:
          avgCoinScores[coin][0], avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
@@ -24,7 +25,6 @@ def amalgamateScores(coinOrderBookRatios, coinMkToVolRatios, totalOrderBookRatio
    def displayCoinScores(coinMkToVolRatios):
       for coin in sorted(coinMkToVolRatios, key=lambda x: coinMkToVolRatios[x]):
          print(coin + ": " + str(coinMkToVolRatios[coin][0]/coinMkToVolRatios[coin][1]))
-      
-coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
-avgCoinScores = amalgamateScores(coinOrderBookRatios, coinMkToVolRatios, totalOrderBookRatioScore, totalMkToVolScore)
+
+avgCoinScores = amalgamateScores()
 displayCoinScores(avgCoinScores)
