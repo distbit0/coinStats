@@ -24,7 +24,7 @@ def amalgamateScores():
 
 
 def displayCoinScores(coinMkToVolRatios):
-   for coin in sorted(coinMkToVolRatios, key=lambda x: coinMkToVolRatios[x]):
+   for coin in sorted(coinMkToVolRatios, key=lambda x: coinMkToVolRatios[x][0]/coinMkToVolRatios[x][1]):
       print(coin + ": " + str(coinMkToVolRatios[coin][0]/coinMkToVolRatios[coin][1]))
 
 avgCoinScores = amalgamateScores()
