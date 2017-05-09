@@ -3,11 +3,11 @@ def collectData():
    from orderBookRatio import getOpportunities
    coinOrderBookRatios = getOpportunities()
    coinMkToVolRatios = getCoinMkToVolRatios()
-   avgCoinScores = {}
    totalMkToVolScore, totalOrderBookRatioScore = [sum(coinMkToVolRatios.values()), sum(coinOrderBookRatios.values())]
    return [coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore]
 
 def amalgamateScores():
+   avgCoinScores = {}
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
    for coin in coinOrderBookRatios:
       if coin in avgCoinScores:
