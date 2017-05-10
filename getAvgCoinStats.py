@@ -12,7 +12,6 @@ def getArguments():
    arguments.append("")
    return arguments[1]
       
-
 def amalgamateScores():
    avgCoinScores = {}
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
@@ -23,12 +22,14 @@ def amalgamateScores():
             avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, avgCoinScores[coin][1] + 1]
          else:
             avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
+            
    if argument == "" or argument == "mktovol":
       for coin in coinMkToVolRatios:
          if coin in avgCoinScores:
             avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinMkToVolRatios[coin]/totalMkToVolScore, avgCoinScores[coin][1] + 1]
          else:
             avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
+            
    return avgCoinScores
 
 
