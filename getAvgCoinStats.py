@@ -6,20 +6,29 @@ def collectData():
    totalMkToVolScore, totalOrderBookRatioScore = [sum(coinMkToVolRatios.values()), sum(coinOrderBookRatios.values())]
    return [coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore]
 
+def getArguments():
+   import sys
+   arguments = sys.argv
+   arguments.append("")
+   return arguments[1]
+      
+
 def amalgamateScores():
    avgCoinScores = {}
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
-   for coin in coinOrderBookRatios:
-      if coin in avgCoinScores:
-         avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, avgCoinScores[coin][1] + 1]
-      else:
-         avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
-         
-   for coin in coinMkToVolRatios:
-      if coin in avgCoinScores:
-         avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinMkToVolRatios[coin]/totalMkToVolScore, avgCoinScores[coin][1] + 1]
-      else:
-         avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
+   argument = getArguments()
+   if argument == "" or argument == "orderbook":
+      for coin in coinOrderBookRatios:
+         if coin in avgCoinScores:
+            avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, avgCoinScores[coin][1] + 1]
+         else:
+            avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
+   if argument == "" or argument == "mktovol":
+      for coin in coinMkToVolRatios:
+         if coin in avgCoinScores:
+            avgCoinScores[coin][0], avgCoinScores[coin][1] = [coinMkToVolRatios[coin]/totalMkToVolScore, avgCoinScores[coin][1] + 1]
+         else:
+            avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
    return avgCoinScores
 
 
