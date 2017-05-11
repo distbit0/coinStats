@@ -9,7 +9,6 @@ def collectData():
 def getArguments():
    import sys
    arguments = sys.argv
-   arguments.extend(["", "", ""])
    return arguments
 
 def removeBearishCoins(coinScores):
