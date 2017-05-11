@@ -1,4 +1,5 @@
 minVol = 200
+period = 10 * 86400
 
 def representsFloat(s):
     try: 
@@ -29,18 +30,25 @@ def getBitcoinPrice():
    import requests
    return requests.get("https://blockchain.info/ticker").json()["USD"]["last"]
    
-def getCoinData(coin, allCoinData, bitcoinPrice):
-   coinVolume = coinMk = False
+def getCoinData(coin, allCoinData, bitcoinPrice, period):
+   import poloniex
+   import time
+   currentTime = time.time()
+   startTime = currentTime - period
+   polo = poloniex.Poloniex()
+   coinMk = False
+   coinVolume = 0
    try:
       coinData = [currency for currency in allCoinData["markets"] if currency["symbol"].lower() == coin][0]
    except: return [0,0]
-      
-   if representsFloat(coinData["volume24"]["btc"]) and float(coinData["volume24"]["btc"]) > 0:
-      coinVolume = float(coinData["volume24"]["btc"]) * bitcoinPrice
+   
+   for day in polo.returnChartData(pair="BTC_" + coin.upper(), start=startTime, end=currentTime, period=86400):
+      coinVolume += float(day["volume"]) * bitcoinPrice
+   coinVolume /= (period/86400)
       
    if representsFloat(coinData["marketCap"]["usd"]) and float(coinData["marketCap"]["usd"]) > 0:
       coinMk = float(coinData["marketCap"]["usd"])
-
+      
    if coinMk and coinVolume:
       return [coinMk, coinVolume]
    else:
@@ -61,7 +69,7 @@ def getCoinMkToVolRatios():
    globalData = getGlobalData()
    coinMkToVolRatios = {}
    for coin in coinNames:
-      coinData = getCoinData(coin, allCoinData, bitcoinPrice)
+      coinData = getCoinData(coin, allCoinData, bitcoinPrice, period)
       if coinData[0] != 0:
          coinMkToVolRatios[coin] = getCoinMkToVolRatio(coinData, globalData)
    return coinMkToVolRatios
