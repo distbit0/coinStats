@@ -1,6 +1,9 @@
 import tornado.ioloop
 import tornado.web
-import coinStats
+import getAvgCoinStats
+import volumeToMarketCapRatio
+import orderBookRatio
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("")
