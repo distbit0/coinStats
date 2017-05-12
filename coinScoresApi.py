@@ -1,5 +1,6 @@
 import tornado.ioloop
 import tornado.web
+from tornado import web
 from getAvgCoinStats import amalgamateScores as getAvgCoinStats
 
 class getCoinStats(tornado.web.RequestHandler):
@@ -15,7 +16,6 @@ class getCoinStats(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         (r"/stats/", getCoinStats),
-        (r"/", getHomePage),
         (r"/index.html", web.StaticFileHandler, {"path": "index.html"}),
         (r"/js.js", web.StaticFileHandler, {"path": "js.js"}),
     ])
