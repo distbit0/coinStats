@@ -4,13 +4,14 @@ import getAvgCoinStats
 import volumeToMarketCapRatio
 import orderBookRatio
 
-class MainHandler(tornado.web.RequestHandler):
+class getCoinStats(tornado.web.RequestHandler):
     def get(self):
+        
         self.write("")
 
 def make_app():
     return tornado.web.Application([
-        (r"/", MainHandler),
+        (r"/", getCoinStats),
     ])
 
 if __name__ == "__main__":
