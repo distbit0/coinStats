@@ -20,10 +20,10 @@ def removeBearishCoins(coinScores):
    return strippedCoinScores
          
 
-def amalgamateScores():
+def amalgamateScores(arguments=[]):
    avgCoinScores = {}
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
-   arguments = getArguments()
+   arguments.extend(getArguments())
    if not "mktovol" in arguments:
       for coin in coinOrderBookRatios:
          if coin in avgCoinScores:
