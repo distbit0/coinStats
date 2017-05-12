@@ -1,19 +1,8 @@
 import tornado.ioloop
 import tornado.web
 from getAvgCoinStats import amalgamateScores as getAvgCoinStats
-import json
 
 class getCoinStats(tornado.web.RequestHandler):
-    def get(self):
-        requestedData = self.get_argument("stat", "avg")
-        if requestedData == "avg":
-            self.write(getAvgCoinStats())
-        elif requestedData == "orderbook":
-            self.write(getAvgCoinStats("orderbook"))
-        elif requestedData == "mktovol":
-            self.write(getAvgCoinStats("mktovol"))
-            
-class getHomePage(tornado.web.RequestHandler):
     def get(self):
         requestedData = self.get_argument("stat", "avg")
         if requestedData == "avg":
