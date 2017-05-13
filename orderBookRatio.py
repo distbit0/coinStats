@@ -1,3 +1,4 @@
+orderBookDepth = 0.2
 ###Function to set up polo API connection###
 def initPoloConnection():
   from poloniex import Poloniex
@@ -13,17 +14,20 @@ def getCoinNames(api):
   return coinList
 
 #####Function to get orderbook vol up to daily extremes##############
-def getOrderBookVol(api, pair):
+def getOrderBookVol(api, pair, orderBookDepth):
   orderbook = api.returnOrderBook(pair, depth=10000000)
+  bidLimit, askLimit = [bidLimit -= bidLimit * orderBookDepth, askLimit += askLimit * orderBookDepth]
   bids, asks = [orderbook["bids"], orderbook["asks"]]
   price = (float(bids[0][0]) + float(asks[0][0])) / 2
   bidVol = askVol = 0
   
   for bid in bids:
-    bidVol += float(bid[1]) * float(bid[0])
+    if bid[0] >= bidLimit:
+      bidVol += float(bid[1]) * float(bid[0])
 
   for ask in asks:
-    askVol += float(ask[1]) * price
+    if ask[0] <= askLimit:
+      askVol += float(ask[1]) * price
 
   return bidVol/askVol
 #######################################################################
@@ -34,5 +38,5 @@ def getOpportunities():
   api = initPoloConnection()
   coinNames = getCoinNames(api)
   for coin in coinNames:
-    coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(api, coin)
+    coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(api, coin, orderBookDepth)
   return coinOpportunities
