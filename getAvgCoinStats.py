@@ -15,11 +15,6 @@ def getCoinNames():
     if "BTC_" in market and float(coins[market]["BTC"]) > 200:
       coinList.append(market.replace("BTC_", "").lower())
   return coinList
-  
-def getArguments():
-   import sys
-   arguments = sys.argv[1:]
-   return arguments     
 
 def amalgamateScores():
    coinScores = {}
@@ -40,9 +35,9 @@ def amalgamateScores():
 
 def displayCoinScores(coinScores):
    for coin in sorted(coinScores, key=lambda x: coinScores[x]["avg"]):
-      avg = str(coinScores["avg"])
-      orderbook = str(coinScores["orderBook"])
-      mkToVol = str(coinScores["mkToVol"])
+      avg = str(coinScores[coin]["avg"])
+      orderbook = str(coinScores[coin]["orderBook"])
+      mkToVol = str(coinScores[coin]["mkToVol"])
       print(coin + ": \tAvg: " + avg + "\tOrderbook: " + orderbook + "\tmkToVol: " + mkToVol)
 
 if __name__ == "__main__":
