@@ -1,48 +1,49 @@
 def collectData():
-   from volumeToMarketCapRatio import getCoinMkToVolRatios
-   from orderBookRatio import getOpportunities
-   coinOrderBookRatios = removeBearishCoins(getOpportunities())
-   coinMkToVolRatios = removeBearishCoins(getCoinMkToVolRatios())
+   from volToMkRatio import getCoinMkToVolRatios
+   from orderBookRatio import getCoinOrderBookRatios
+   coinOrderBookRatios = getCoinOrderBookRatios()
+   coinMkToVolRatios = getCoinMkToVolRatios()
    totalMkToVolScore, totalOrderBookRatioScore = [sum(coinMkToVolRatios.values()), sum(coinOrderBookRatios.values())]
    return [coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore]
 
+def getCoinNames():
+  from poloniex import Poloniex
+  api =  Poloniex()
+  coinList = []
+  coins = api.return24hVolume()
+  for market in coins:
+    if "BTC_" in market and float(coins[market]["BTC"]) > 200:
+      coinList.append(market.replace("BTC_", "").lower())
+  return coinList
+  
 def getArguments():
    import sys
-   arguments = sys.argv
-   return arguments
+   arguments = sys.argv[1:]
+   return arguments     
 
-def removeBearishCoins(coinScores):
-   strippedCoinScores = {}
-   arguments = getArguments()
-   for coin in coinScores:
-      if coinScores[coin] > 1 or not "bullish" in arguments:
-         strippedCoinScores[coin] = coinScores[coin]
-   return strippedCoinScores
-         
-
-def amalgamateScores(arguments=[]):
-   avgCoinScores = {}
+def amalgamateScores():
+   coinScores = {}
    coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
-   arguments.extend(getArguments())
-   if not "mktovol" in arguments:
-      for coin in coinOrderBookRatios:
-         if coin in avgCoinScores:
-            avgCoinScores[coin][0], avgCoinScores[coin][1] = [avgCoinScores[coin][0] + coinOrderBookRatios[coin]/totalOrderBookRatioScore, avgCoinScores[coin][1] + 1]
-         else:
-            avgCoinScores[coin] = [coinOrderBookRatios[coin]/totalOrderBookRatioScore, 1]
-            
-   if not "orderbook" in arguments:
-      for coin in coinMkToVolRatios:
-         if coin in avgCoinScores:
-            avgCoinScores[coin][0], avgCoinScores[coin][1] = [avgCoinScores[coin][0] + coinMkToVolRatios[coin]/totalMkToVolScore, avgCoinScores[coin][1] + 1]
-         else:
-            avgCoinScores[coin] = [coinMkToVolRatios[coin]/totalMkToVolScore, 1]
-   return avgCoinScores
+   coinNames = getCoinNames()
+   for coin in coinNames:
+      orderBookRatio = avgCoinRatio = mkToVolRatio = 0
+      if coin in coinOrderBookRatios:
+         orderBookRatio = coinOrderBookRatios[coin]/totalOrderBookRatioScore
+         avgCoinRatio = orderBookRatio
+      if coin in coinMkToVolRatios:
+         mkToVolRatio = coinMkToVolRatios[coin]/totalMkToVolScore
+         avgCoinRatio = (orderBookRatio + mkToVolRatio) / 2
+         
+      coinScores[coin] = {"avg":avgCoinRatio, "mkToVol":mkToVolRatio, "orderbook":orderBookRatio}
+   return coinScores
 
 
-def displayCoinScores(coinMkToVolRatios):
-   for coin in sorted(coinMkToVolRatios, key=lambda x: coinMkToVolRatios[x][0]/coinMkToVolRatios[x][1]):
-      print(coin + ": " + str(coinMkToVolRatios[coin][0]/coinMkToVolRatios[coin][1]))
+def displayCoinScores(coinScores):
+   for coin in sorted(coinScores, key=lambda x: coinScores[x]["avg"]):
+      avg = str(coinScores["avg"])
+      orderbook = str(coinScores["orderBook"])
+      mkToVol = str(coinScores["mkToVol"])
+      print(coin + ": \tAvg: " + avg + "\tOrderbook: " + orderbook + "\tmkToVol: " + mkToVol)
 
 if __name__ == "__main__":
    avgCoinScores = amalgamateScores()
