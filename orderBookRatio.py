@@ -5,7 +5,8 @@ def initPoloConnection():
   return Poloniex()
 ############################################s
 
-def getCoinNames(api):
+def getCoinNames():
+  api = initPoloConnection()
   coinList = []
   coins = api.return24hVolume()
   for market in coins:
@@ -16,27 +17,27 @@ def getCoinNames(api):
 #####Function to get orderbook vol up to daily extremes##############
 def getOrderBookVol(api, pair, orderBookDepth):
   orderbook = api.returnOrderBook(pair, depth=10000000)
-  bidLimit, askLimit = [bidLimit -= bidLimit * orderBookDepth, askLimit += askLimit * orderBookDepth]
   bids, asks = [orderbook["bids"], orderbook["asks"]]
   price = (float(bids[0][0]) + float(asks[0][0])) / 2
+  bidLimit, askLimit = [price - price * orderBookDepth, price + price * orderBookDepth]
   bidVol = askVol = 0
   
   for bid in bids:
-    if bid[0] >= bidLimit:
+    if float(bid[0]) >= bidLimit:
       bidVol += float(bid[1]) * float(bid[0])
 
   for ask in asks:
-    if ask[0] <= askLimit:
+    if float(ask[0]) <= askLimit:
       askVol += float(ask[1]) * price
 
   return bidVol/askVol
 #######################################################################
     
 #####Generate Coin Opportunity List#######
-def getOpportunities():
+def getCoinOrderBookRatios():
   coinOpportunities = {}
   api = initPoloConnection()
-  coinNames = getCoinNames(api)
+  coinNames = getCoinNames()
   for coin in coinNames:
     coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(api, coin, orderBookDepth)
   return coinOpportunities
