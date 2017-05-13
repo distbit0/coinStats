@@ -23,22 +23,24 @@ def amalgamateScores():
    for coin in coinNames:
       orderBookRatio = avgCoinRatio = mkToVolRatio = 0
       if coin in coinOrderBookRatios:
-         orderBookRatio = coinOrderBookRatios[coin]/totalOrderBookRatioScore
+         orderBook = coinOrderBookRatios[coin]
+         orderBookRatio = orderBook/totalOrderBookRatioScore
          avgCoinRatio = orderBookRatio
       if coin in coinMkToVolRatios:
-         mkToVolRatio = coinMkToVolRatios[coin]/totalMkToVolScore
+         mkToVol = coinMkToVolRatios[coin]
+         mkToVolRatio = mkToVol/totalMkToVolScore
          avgCoinRatio = (orderBookRatio + mkToVolRatio) / 2
-         
-      coinScores[coin] = {"avg":avgCoinRatio, "mkToVol":mkToVolRatio, "orderbook":orderBookRatio}
+      
+      coinScores[coin] = {"avg":avgCoinRatio, "mkToVol":mkToVol, "orderBook":orderBook}
    return coinScores
 
 
 def displayCoinScores(coinScores):
    for coin in sorted(coinScores, key=lambda x: coinScores[x]["avg"]):
-      avg = str(coinScores[coin]["avg"])
-      orderbook = str(coinScores[coin]["orderBook"])
-      mkToVol = str(coinScores[coin]["mkToVol"])
-      print(coin + ": \tAvg: " + avg + "\tOrderbook: " + orderbook + "\tmkToVol: " + mkToVol)
+      avg = str(round(coinScores[coin]["avg"], 5))
+      orderBook = str(round(coinScores[coin]["orderBook"], 5))
+      mkToVol = str(round(coinScores[coin]["mkToVol"], 5))
+      print(coin + ": \tavg: " + avg + "\torderBook: " + orderBook + "\tmkToVol: " + mkToVol)
 
 if __name__ == "__main__":
    avgCoinScores = amalgamateScores()
