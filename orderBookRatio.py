@@ -1,4 +1,4 @@
-orderBookDepth = 0.5
+orderBookDepth = 0.2
 ###Function to set up polo API connection###
 def initPoloConnection():
   from poloniex import Poloniex
