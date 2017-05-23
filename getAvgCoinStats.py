@@ -1,44 +1,47 @@
-orderBookDepth = 0.2
-###Function to set up polo API connection###
-def initPoloConnection():
-  from poloniex import Poloniex
-  return Poloniex()
-############################################
+def collectData():
+   from volToMkRatio import getCoinMkToVolRatios
+   from orderBookRatio import getCoinOrderBookRatios
+   coinOrderBookRatios = getCoinOrderBookRatios()
+   coinMkToVolRatios = getCoinMkToVolRatios()
+   totalMkToVolScore, totalOrderBookRatioScore = [sum(coinMkToVolRatios.values()), sum(coinOrderBookRatios.values())]
+   return [coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore]
 
 def getCoinNames():
-  api = initPoloConnection()
+  from poloniex import Poloniex
+  api =  Poloniex()
   coinList = []
   coins = api.return24hVolume()
   for market in coins:
     if "BTC_" in market and float(coins[market]["BTC"]) > 200:
-      coinList.append(market)
+      coinList.append(market.replace("BTC_", "").lower())
   return coinList
 
-#####Function to get orderbook vol up to daily extremes##############
-def getOrderBookVol(pair):
-  api = initPoloConnection()
-  orderBook = api.returnOrderBook(pair, depth=10000000)
-  bids, asks = [orderBook["bids"], orderBook["asks"]]
-  price = (float(bids[0][0]) + float(asks[0][0])) / 2
-  bidLimit, askLimit = [price - price * orderBookDepth, price + price * orderBookDepth]
-  bidVol = askVol = 0
-  
-  for bid in bids:
-    if float(bid[0]) >= bidLimit:
-      bidVol += float(bid[1]) * float(bid[0])
+def amalgamateScores():
+   coinScores = {}
+   coinOrderBookRatios, coinMkToVolRatios, totalMkToVolScore, totalOrderBookRatioScore = collectData()
+   coinNames = getCoinNames()
+   for coin in coinNames:
+      orderBookRatio = avgCoinRatio = mkToVolRatio = 0
+      if coin in coinOrderBookRatios:
+         orderBook = coinOrderBookRatios[coin]
+         orderBookRatio = orderBook/totalOrderBookRatioScore
+         avgCoinRatio = orderBookRatio
+      if coin in coinMkToVolRatios:
+         mkToVol = coinMkToVolRatios[coin]
+         mkToVolRatio = mkToVol/totalMkToVolScore
+         avgCoinRatio = (orderBookRatio + mkToVolRatio) / 2
+      
+      coinScores[coin] = {"avg":avgCoinRatio, "mkToVol":mkToVol, "orderBook":orderBook}
+   return coinScores
 
-  for ask in asks:
-    if float(ask[0]) <= askLimit:
-      askVol += float(ask[1]) * price
 
-  return bidVol/askVol
-#######################################################################
-    
-#####Generate Coin Opportunity List#######
-def getCoinOrderBookRatios():
-  coinOpportunities = {}
-  api = initPoloConnection()
-  coinNames = getCoinNames()
-  for coin in coinNames:
-    coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(coin)
-  return coinOpportunities
+def displayCoinScores(coinScores):
+   for coin in sorted(coinScores, key=lambda x: coinScores[x]["avg"]):
+      avg = str(round(coinScores[coin]["avg"], 5))
+      orderBook = str(round(coinScores[coin]["orderBook"], 5))
+      mkToVol = str(round(coinScores[coin]["mkToVol"], 5))
+      print(coin + ": \tavg: " + avg + "\torderBook: " + orderBook + "\tmkToVol: " + mkToVol)
+
+if __name__ == "__main__":
+   avgCoinScores = amalgamateScores()
+   displayCoinScores(avgCoinScores)
