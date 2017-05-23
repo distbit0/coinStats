@@ -15,7 +15,8 @@ def getCoinNames():
   return coinList
 
 #####Function to get orderbook vol up to daily extremes##############
-def getOrderBookVol(api, pair, orderBookDepth):
+def getOrderBookVol(pair):
+  api = initPoloConnection()
   orderBook = api.returnOrderBook(pair, depth=10000000)
   bids, asks = [orderBook["bids"], orderBook["asks"]]
   price = (float(bids[0][0]) + float(asks[0][0])) / 2
@@ -39,5 +40,5 @@ def getCoinOrderBookRatios():
   api = initPoloConnection()
   coinNames = getCoinNames()
   for coin in coinNames:
-    coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(api, coin, orderBookDepth)
+    coinOpportunities[coin.replace("BTC_", "").lower()] = getOrderBookVol(coin)
   return coinOpportunities
