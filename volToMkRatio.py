@@ -59,8 +59,7 @@ def getCoinMkToVolRatio(coinData, globalData):
   coinMk, coinVol = coinData
   coinVolumeRatio = coinVol / globalVol
   coinMarketCapRatio = coinMk/ globalMk
-  averageRatio = (coinVolumeRatio + coinMarketCapRatio) / 2 
-  return (averageRatio / coinMarketCapRatio)
+  return coinVolumeRatio / coinMarketCapRatio
 
 def getCoinMkToVolRatios():
    bitcoinPrice = getBitcoinPrice()
