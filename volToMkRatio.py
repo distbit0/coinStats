@@ -1,4 +1,4 @@
-minVol = 200
+minVol = 100
 period = 10 * 86400
 
 def representsFloat(s):
