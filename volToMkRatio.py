@@ -1,19 +1,17 @@
-minVol = 100
 period = 10 * 86400
-
 def representsFloat(s):
     try: 
         float(s)
         return True
     except ValueError: return False
         
-def getCoinNames(minVol):
+def getCoinNames():
   from poloniex import Poloniex
   api =  Poloniex()
   coinList = []
   coins = api.return24hVolume()
   for market in coins:
-    if "BTC_" in market and float(coins[market]["BTC"]) > minVol:
+    if "BTC_" in market:
       coinList.append(market.replace("BTC_", "").lower())
   return coinList
   
@@ -63,7 +61,7 @@ def getCoinMkToVolRatio(coinData, globalData):
 
 def getCoinMkToVolRatios():
    bitcoinPrice = getBitcoinPrice()
-   coinNames = getCoinNames(minVol)
+   coinNames = getCoinNames()
    allCoinData = getAllCoinData()
    globalData = getGlobalData()
    coinMkToVolRatios = {}
