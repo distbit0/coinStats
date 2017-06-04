@@ -10,7 +10,7 @@ def getCoinNames():
   coinList = []
   coins = api.return24hVolume()
   for market in coins:
-    if "BTC_" in market and float(coins[market]["BTC"]) > 100:
+    if "BTC_" in market:
       coinList.append(market)
   return coinList
 
