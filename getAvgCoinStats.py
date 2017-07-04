@@ -32,7 +32,7 @@ def displayCoinScores():
    coinScores = amalgamateScores()
    for coin in sorted(coinScores, key=lambda x: coinScores[x]["avg"]):
       avg = str(round(coinScores[coin]["avg"], 5))
-      print(coin + ": \tavg: " + avg)
+      print(coin + ": bid/ask Ratio: " + avg)
 
 if __name__ == "__main__":
    displayCoinScores()
